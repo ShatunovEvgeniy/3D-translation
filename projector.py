@@ -3,14 +3,40 @@ import numpy as np
 
 
 class Projector:
-    def __init__(self, position, height, width, stripe_count):
-        self.stripe_count = stripe_count
-        self.position = position  # position of the projector relative to the camera
-        self.stripes_order = self.StripeArray()  # order of stripes in each iteration
-        self.height = height  # height of projection image
-        self.width = width  # width of projection image
-        self.strip_width = width // stripe_count
+    def __init__(self, position, angle: float, projector_resolution, accuracy=0.5):
+        """
+        :param position: np.array([x, y, z]):
+                Coordinates in the coordinate system associated with the camera
+                where Oy, Ox are directed as usually for images in system of the camera,
+                Oz is directed to an object from the camera (right-handed coordinate system).
+                The center of a coordinate system is in the camera focus.
+        :param angle:[0, 90]: Angle related to the camera.
+        :param projector_resolution: np.array([h, w]): Resolution of projector in pixels (etc. 1024x768).
+        :param accuracy:[0...1]: Shows how many stripes will be according to resolution in the last image.
+        """
+        self.position = position
+        self.angle = angle
+
+        self.height = projector_resolution[1]  # height of an output stripe image in pixels
+        self.width = projector_resolution[0]  # width of an output stipe image in pixels
+
+        self.image_count = self.FindImageCount(accuracy)
+        self.stripe_count = 2 ** self.image_count  # count of stripes in the last image
+
+        self.stripes_order = self.StripeArray()  # np.array(log2(count), count-1) with order of stripes in iterations
+        self.strip_width = self.width // self.stripe_count
+        # the last strip has a calculation error of stripe_width
+        self.last_stripe_width = self.strip_width + self.width % self.stripe_count
+
         self.image_index = 0  # index of last generated image
+
+        ''' It needs to translate pixels in metres to get a plane equation for each stripe. 
+            For that reason there is an experiment where an image is projected on a screen 
+                which is not far away from the projector.
+            It is also possible to use default value.
+        '''
+        self.pixel_in_meters = 0.000264583333337192  # length of a pixel in metres
+        self.test_distance = None  # distance for a screen with a test projection
 
     def StripeArray(self) -> np.array:
         """

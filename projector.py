@@ -111,3 +111,34 @@ class Projector:
         width = self.strip_width
         if stripe_number == self.stripe_count - 1:
             width = self.last_stripe_width
+
+        # x coordinate (in pixels) of the middle pixel in a stripe
+        middle_stripe_pixel = (stripe_number - 1) * self.strip_width + width // 2
+        central_image_pixel = self.width // 2  # x coordinate (in pixels) of the central pixel in an image
+
+        delta_pixel = middle_stripe_pixel - central_image_pixel  # pixel shift
+        delta_pixel *= self.pixel_in_meters  # shift in meters
+        delta_angel = self.angle - np.arctan(delta_pixel / self.test_distance)  # angle shift
+
+        x = self.test_distance * np.cos(self.angle - delta_angel)
+        y = self.position[1]
+        z = self.test_distance * np.sin(self.angle - delta_angel)
+
+        point1 = self.position
+        point2 = np.array([x, y, z])
+        point3 = np.array([x, y + 1, z])
+
+        # these two vectors are in the plane
+        v1 = point3 - point1
+        v2 = point2 - point1
+
+        # the cross product is a vector normal to the plane
+        cp = np.cross(v1, v2)
+        a, b, c = cp
+
+        # this evaluates a * x3 + b * y3 + c * z3 which equals d
+        d = np.dot(cp, point3)
+
+        print('The equation is {0}x + {1}y + {2}z = {3}'.format(a, b, c, d))
+
+        return np.array([a, b, c, d])

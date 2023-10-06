@@ -1,4 +1,4 @@
-from math import log2, trunc
+from math import log2, floor
 import numpy as np
 
 

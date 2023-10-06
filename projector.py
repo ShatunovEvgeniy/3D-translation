@@ -37,3 +37,18 @@ class Projector:
         print(stripe_array)
         return stripe_array
 
+    def GenerateImage(self) -> np.array:
+        """
+        Create an image for current stripe order
+
+        :return: np.array - desired image
+        """
+        image = np.zeros((self.width, self.height))
+        stripes = np.where(self.stripes_order[self.image_index] == 1)[0]  # indexes of stripes which are on
+        for stripe in stripes:
+            x0 = self.strip_width * stripe  # coordinate of the start of a stripe
+            image[:, x0:x0 + self.strip_width] = 1
+
+        self.image_index += 1
+        return image
+

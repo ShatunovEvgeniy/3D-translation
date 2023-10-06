@@ -53,11 +53,11 @@ class Projector:
 
     def StripeArray(self) -> np.array:
         """
-        Create a np.array() of stripes order for each iteration
+        Create a np.array() of stripes order for each iteration.
 
-        :return: np.array() with shape=(log2(count), count - 1)
-        where a line number is number of a stripe projection and a column number is number of each stipe.
-        So (i, j) element shows if in an i-iteration a j-stripe is shown or not
+        :return: np.array(), shape=(log2(stripe_count), stripe_count - 1):
+                A line number is number of an image and a column number is number of each stipe.
+                So (i, j) element shows if in an i-iteration a j-stripe is shown or not
         """
         image_count = log2(self.stripe_count)  # count of projection needing for 2D->3D translation
         if trunc(image_count) != image_count:
@@ -80,7 +80,7 @@ class Projector:
         """
         Create an image for current stripe order
 
-        :return: np.array - desired image
+        :return: Desired image
         """
         image = np.zeros((self.width, self.height))
         stripes = np.where(self.stripes_order[self.image_index] == 1)[0]  # indexes of stripes which are on
@@ -91,12 +91,15 @@ class Projector:
         self.image_index += 1
         return image
 
-    def GetStripeEquation(self, stripe_number) -> np.array:
+    def GetPlaneEquation(self, stripe_number: int) -> np.array:
         """
-        Create a np.array() with plane parameters a,b,c,d of the stripe
+        Create a np.array() with plane parameters a,b,c,d of the stripe.
+        To avoid calculation of planes for each pixel of a stripe it calculates only for middle pixel.
+        Equation is calculated by 3 points which belong to a plane.
 
-        param stripe_number: number of a stripe which plate is calculating
-        :return: np.array(a, b, c, d)
-        where a, b, c, d are parameters of plane
+        :param stripe_number: number of a stripe which plate is calculating
+                 where a, b, c, d are parameters of plane
         """
-        pass
+        width = self.strip_width
+        if stripe_number == self.stripe_count - 1:
+            width = self.last_stripe_width

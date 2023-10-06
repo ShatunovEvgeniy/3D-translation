@@ -38,6 +38,19 @@ class Projector:
         self.pixel_in_meters = 0.000264583333337192  # length of a pixel in metres
         self.test_distance = None  # distance for a screen with a test projection
 
+    def FindImageCount(self, accuracy: float) -> int:
+        """
+        Find count of images in process.
+
+        :param accuracy:[0...1]: which shows how many images will be according to resolution.
+                        If accuracy 1 it will be max possible power of 2.
+
+        :return: Count of images.
+        """
+        max_count = floor(log2(self.width))
+        needed_count = floor(max_count * accuracy)
+        return needed_count
+
     def StripeArray(self) -> np.array:
         """
         Create a np.array() of stripes order for each iteration

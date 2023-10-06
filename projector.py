@@ -105,6 +105,7 @@ class Projector:
         Equation is calculated by 3 points which belong to a plane.
 
         :param stripe_number: number of a stripe which plate is calculating
+        :return: np.array([a, b, c, d])
                  where a, b, c, d are parameters of plane
         """
         width = self.strip_width

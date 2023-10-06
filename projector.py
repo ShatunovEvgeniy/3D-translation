@@ -71,6 +71,18 @@ class Projector:
         print(stripe_array)
         return stripe_array
 
+    def SetTestProjection(self, distance: float, width: float) -> None:
+        """
+        Set measured data in test projection to calculate points of a plane for each stripe
+        which are needed in GetPlaneEquation.
+
+        :param distance: Distance in meters from the projector to projection surface.
+        :param width:
+        :return: None
+        """
+        self.test_distance = distance
+        self.pixel_in_meters = width / self.width
+
     def GenerateImage(self) -> np.array:
         """
         Create an image for current stripe order

@@ -52,3 +52,12 @@ class Projector:
         self.image_index += 1
         return image
 
+    def GetStripeEquation(self, stripe_number) -> np.array:
+        """
+        Create a np.array() with plane parameters a,b,c,d of the stripe
+
+        param stripe_number: number of a stripe which plate is calculating
+        :return: np.array(a, b, c, d)
+        where a, b, c, d are parameters of plane
+        """
+        pass

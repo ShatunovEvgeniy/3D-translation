@@ -5,7 +5,8 @@ import os
 
 
 class Projector:
-    def __init__(self, position, angle: float, projector_resolution, accuracy=0.5):
+    def __init__(self, position: np.ndarray, angle: float, projector_resolution: np.ndarray, accuracy=0.5,
+                 directory='projector_images'):
         """
         :param position: np.array([x, y, z]):
                 Coordinates in the coordinate system associated with the camera
@@ -15,6 +16,7 @@ class Projector:
         :param angle:[0, 90]: Angle related to the camera.
         :param projector_resolution: np.array([h, w]): Resolution of projector in pixels (etc. 1024x768).
         :param accuracy:[0...1]: Shows how many stripes will be according to resolution in the last image.
+        :param directory: Directory to store stripe images.
         """
         self.position = position
         self.angle = angle
@@ -39,6 +41,8 @@ class Projector:
         '''
         self.pixel_in_meters = 0.000264583333337192  # length of a pixel in metres
         self.test_distance = None  # distance for a screen with a test projection
+
+        self.directory = directory
 
     def FindImageCount(self, accuracy: float) -> int:
         """
